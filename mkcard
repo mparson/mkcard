@@ -1,0 +1,67 @@
+#!/bin/bash
+
+printusage() {
+	cat - <<EOF
+$0 [-f filename] [-s size-in-megabytes]
+
+To create a 64 MB file:
+
+$0 -f card.img -s 64 
+
+Due to limitations of the FAT32 filesystem type, the minimum size
+is 32 MB.
+
+If you run it w/o a '-s' flag, it will default to a 32 MB file.
+
+EOF
+}
+
+# print usage if we don't have the right number of arguments
+if (($# == 0 )); then
+	printusage
+	exit 0
+fi
+
+while getopts "f:s:" opts; do
+	case $opts in
+		f )	diskimg="$OPTARG"
+			;;
+		s ) size="$OPTARG"
+			;;
+		* ) printusage
+			exit 0
+			;;
+	esac
+done
+
+size=${size:-32}
+
+if [ $size -lt 32 ]; then
+	printf "Must be 32 MB or larger\n"
+	exit 1
+fi
+
+if [ -f "${diskimg}" ]; then
+	printf "$diskimg already exists, remove and re-create [y/n]?"
+	read -N 1 ans
+
+	if [[ $ans == "y" ]]; then
+		printf "\nremoving ${diskimg}\n"
+		rm -f "${diskimg}"
+	else
+		printf "\n"
+		exit
+	fi
+fi
+
+alignment=1048576
+size=$((size *(1<<20))) 
+size=$(( (size + alignment - 1)/alignment * alignment))
+
+# create the file
+truncate -s $((size + 2*alignment)) "${diskimg}"
+
+# partition the file
+echo ',,c;' | sfdisk ${diskimg}
+
+mformat -F -i ${diskimg}@@$alignment 
