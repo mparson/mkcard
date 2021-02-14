@@ -1,6 +1,6 @@
 # mkcard
 
-A script for creating "sdcard" image files with an MBR patitioni table and a single FAT32 filesystem suitable for use with the [Commander X-16](https://www.commanderx16.com) emulator.  When used in conjunction with the [mtools](https://www.gnu.org/software/mtools/), and a suitable `~/.mtoolsrc` file, you can create images and copy files to & from the card image(s), from the command line, without needing any root permissions.
+A script for creating "sdcard" image files with an MBR patition table and a single FAT32 filesystem suitable for use with the [Commander X-16](https://www.commanderx16.com) emulator.  When used in conjunction with the [mtools](https://www.gnu.org/software/mtools/), and a suitable `~/.mtoolsrc` file, you can create images and copy files to & from the card image(s), from the command line, without needing any root permissions.
 
 To create a 64 meg image file:
 
